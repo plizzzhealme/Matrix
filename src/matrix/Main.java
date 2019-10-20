@@ -5,9 +5,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 
-public class Main {
+class Main {
 
     public static void main(String[] args) {
 
@@ -40,18 +43,20 @@ public class Main {
         int columns = lines.size();
         int rows = matrix[0].length;
         int sortedCount = 0;
+
         for (int l = 0; l < rows; l++) {
             boolean isSorted = true;
+
             for (int m = 0; m < columns - 1; m++) {
                 if (matrix[m][l] > matrix[m + 1][l]) {
                     isSorted = false;
                     break;
                 }
             }
+
             if (isSorted) {
                 sortedCount++;
             }
-            System.out.println(isSorted);
         }
 
         System.out.println("Отсортировано столбцов: " + sortedCount);
