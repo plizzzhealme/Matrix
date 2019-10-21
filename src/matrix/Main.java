@@ -103,6 +103,9 @@ class Main {
      * @return true если являетя, иначе false
      */
     private static boolean isMatrix(int[][] matrix) {
+        if (matrix.length == 0) {
+            return false;
+        }
         int size = matrix[0].length;
         for (int[] raw : matrix) {
             if (raw.length != size) {
