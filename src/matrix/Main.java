@@ -17,7 +17,7 @@ class Main {
             "либо массив не является матрицей";
 
     public static void main(String[] args) {
-        List<String> list = readFromFile(INPUT_FILE);
+        List<String> list = readFromFile();
         int[][] array;
         Matrix matrix;
         String result;
@@ -35,14 +35,14 @@ class Main {
             List<Integer> sortedColumns = matrix.getSortedColumns();
             result = getSortedColumnsInfo(sortedColumns);
             System.out.println(result);
-            writeToFile(OUTPUT_FILE, result, REPLACE);
+            writeToFile(result, REPLACE);
 
             /*
             перемещаем элементы в матрице, печатаем получившуюся матрицу
              */
             matrix.replace();
             System.out.println(matrix);
-            writeToFile(OUTPUT_FILE, matrix.toString(), ADD);
+            writeToFile(matrix.toString(), ADD);
         } else {
             System.out.println(INCORRECT_DATA);
         }
@@ -51,12 +51,11 @@ class Main {
     /**
      * Считываем текстовый файл в список строк
      *
-     * @param path путь к файлу
      * @return получившийся список, в случае ошибки - пустой список
      */
-    private static List<String> readFromFile(String path) {
+    private static List<String> readFromFile() {
         try {
-            return Files.readAllLines(Paths.get(path));
+            return Files.readAllLines(Paths.get(INPUT_FILE));
         } catch (IOException e) {
             return new ArrayList<>();
         }
@@ -81,12 +80,11 @@ class Main {
     /**
      * Сохраняем строку в текстовый файл
      *
-     * @param path   путь к файлу
      * @param data   записываемая строка
      * @param append true - добавить в конец файла, false - перезаписать файл
      */
-    private static void writeToFile(String path, String data, boolean append) {
-        try (FileWriter writer = new FileWriter(path, append)) {
+    private static void writeToFile(String data, boolean append) {
+        try (FileWriter writer = new FileWriter(OUTPUT_FILE, append)) {
             writer.write(data);
             writer.flush();
         } catch (IOException ex) {

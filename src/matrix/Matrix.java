@@ -4,10 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Matrix {
+    /**
+     * Все строки должны быть одинаковой длины
+     */
     private final int[][] data;
     private final int columnsNumber;
     private final int rowsNumber;
 
+    /**
+     * копирует в матрицу элементы из массива
+     *
+     * @param array двумерный массив, строки должны иметь одинаковую длину
+     */
     Matrix(int[][] array) {
         rowsNumber = array.length;
         columnsNumber = array[0].length;
