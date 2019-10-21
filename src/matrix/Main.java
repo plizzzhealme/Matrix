@@ -9,50 +9,56 @@ import java.util.Arrays;
 import java.util.List;
 
 class Main {
-
+    private static final boolean ADD = true;
+    private static final boolean REPLACE = false;
     private static final String INPUT_FILE = "in.txt";
     private static final String OUTPUT_FILE = "out.txt";
-    private static final String FILE_ERROR = "Исходный файл содержит недопустимые символы";
-    private static final String MATRIX_ERROR = "Исходный массив не является матрицей";
+    private static final String INCORRECT_DATA = "Исходный файл содержит недопустимые символы, " +
+            "либо массив не является матрицей";
 
     public static void main(String[] args) {
-
-        List<String> list = readFromFile();
+        List<String> list = readFromFile(INPUT_FILE);
         int[][] array;
         Matrix matrix;
         String result;
 
-        if (isDigital(list)) {
-            array = listToArray(list);
+        if (isDigital(list) && isMatrix(array = listToArray(list))) { //если данные в файле корректны
 
-            if (isMatrix(array)) {
-                matrix = new Matrix(array);
-                System.out.println(matrix);
+            /*
+            создаем и печатаем исходную матрицу
+             */
+            matrix = new Matrix(array);
+            System.out.println(matrix);
 
-                List<Integer> sortedColumns = matrix.getSortedColumns();
-                result = getSortedColumnsInfo(sortedColumns);
-                System.out.println(result);
-                writeToFile(result);
+            /*
+            Считываем и печатаем отсортированные столбцы
+             */
+            List<Integer> sortedColumns = matrix.getSortedColumns();
+            result = getSortedColumnsInfo(sortedColumns);
+            System.out.println(result);
+            writeToFile(OUTPUT_FILE, result, REPLACE);
 
-                matrix.replace();
-                System.out.println(matrix);
+            /*
+            перемещаем элементы в матрице, печатаем получившуюся матрицу
+             */
+            matrix.replace();
+            System.out.println(matrix);
+            writeToFile(OUTPUT_FILE, matrix.toString(), ADD);
 
-            } else {
-                System.out.println(FILE_ERROR);
-            }
         } else {
-            System.out.println(MATRIX_ERROR);
+            System.out.println(INCORRECT_DATA);
         }
     }
 
     /**
-     * Считывает файл in.txt в список строк
+     * Считываем текстовый файл в список строк
      *
-     * @return список строк либо пустой список в случае ошибки
+     * @param path путь к файлу
+     * @return получившийся список, в случае ошибки - пустой список
      */
-    private static List<String> readFromFile() {
+    private static List<String> readFromFile(String path) {
         try {
-            return Files.readAllLines(Paths.get(INPUT_FILE));
+            return Files.readAllLines(Paths.get(path));
         } catch (IOException e) {
             return new ArrayList<>();
         }
@@ -61,29 +67,29 @@ class Main {
     /**
      * Преобразует список строк в двумерный массив чисел
      *
-     * @param lines список строк из файла
+     * @param list список строк из файла
      * @return двумерный массив целых чисел
      */
-    private static int[][] listToArray(List<String> lines) {
-        int[][] matrix = new int[lines.size()][];
+    private static int[][] listToArray(List<String> list) {
+        int[][] array = new int[list.size()][];
         int row = 0;
-
-        for (String line : lines) {
-            matrix[row] = Arrays.stream(line.split(" ")).mapToInt(Integer::parseInt).toArray();
+        for (String line : list) {
+            array[row] = Arrays.stream(line.split(" ")).mapToInt(Integer::parseInt).toArray();
             row++;
         }
-
-        return matrix;
+        return array;
     }
 
     /**
-     * записывает строку в файл out.txt
+     * Сохраняем строку в текстовый файл
      *
-     * @param outputString строка с результатом
+     * @param path   путь к файлу
+     * @param data   записываемая строка
+     * @param append true - добавить в конец файла, false - перезаписать файл
      */
-    private static void writeToFile(String outputString) {
-        try (FileWriter writer = new FileWriter(OUTPUT_FILE, false)) {
-            writer.write(outputString);
+    private static void writeToFile(String path, String data, boolean append) {
+        try (FileWriter writer = new FileWriter(path, append)) {
+            writer.write(data);
             writer.flush();
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
@@ -98,13 +104,11 @@ class Main {
      */
     private static boolean isMatrix(int[][] matrix) {
         int size = matrix[0].length;
-
         for (int[] raw : matrix) {
             if (raw.length != size) {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -116,13 +120,11 @@ class Main {
      */
     private static boolean isDigital(List<String> lines) {
         String rexEx = "([0-9+-]*\\)*\\(*\\s*)+";
-
         for (String line : lines) {
             if (!line.matches(rexEx)) {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -135,11 +137,10 @@ class Main {
     private static String getSortedColumnsInfo(List<Integer> sortedColumns) {
         StringBuilder outputString = new StringBuilder("Отсортировано столбцов: "
                 + sortedColumns.size() + ". Номера столбцов: ");
-
         for (int column : sortedColumns) {
             outputString.append(column + 1).append(" ");
         }
-
+        outputString.append("\n");
         return String.valueOf(outputString);
     }
 }
