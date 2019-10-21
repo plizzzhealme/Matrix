@@ -12,33 +12,36 @@ class Main {
 
     private static final String INPUT_FILE = "in.txt";
     private static final String OUTPUT_FILE = "out.txt";
+    private static final String FILE_ERROR = "Исходный файл содержит недопустимые символы";
+    private static final String MATRIX_ERROR = "Исходный массив не является матрицей";
 
     public static void main(String[] args) {
 
-        List<String> lines = readFromFile();
-        int[][] matrix;
+        List<String> list = readFromFile();
+        int[][] array;
+        Matrix matrix;
+        String result;
 
-        if (onlyNumbers(lines)) {
-            matrix = listToMatrix(lines);
+        if (isDigital(list)) {
+            array = listToArray(list);
 
-            if (isMatrix(matrix)) {
+            if (isMatrix(array)) {
+                matrix = new Matrix(array);
+                System.out.println(matrix);
 
-                List<Integer> sortedRows = getSortedColumns(matrix);
-                int sortedCounter = sortedRows.size();
+                List<Integer> sortedColumns = matrix.getSortedColumns();
+                result = getSortedColumnsInfo(sortedColumns);
+                System.out.println(result);
+                writeToFile(result);
 
-                String outputString = "Отсортировано столбцов: " + sortedCounter + ". Номера столбцов: ";
+                matrix.replace();
+                System.out.println(matrix);
 
-                for (int column : sortedRows) {
-                    outputString += column + 1 + " ";
-                }
-
-                System.out.println(outputString);
-                writeToFile(outputString);
             } else {
-                System.out.println("Файл содержит не матрицу, проверьте количество цифр в каждом ряду");
+                System.out.println(FILE_ERROR);
             }
         } else {
-            System.out.println("Ошибка в матрице. Файл должен содержать только числа");
+            System.out.println(MATRIX_ERROR);
         }
     }
 
@@ -58,10 +61,10 @@ class Main {
     /**
      * Преобразует список строк в двумерный массив чисел
      *
-     * @param lines список строк
-     * @return матрица в виде двумерного массива
+     * @param lines список строк из файла
+     * @return двумерный массив целых чисел
      */
-    private static int[][] listToMatrix(List<String> lines) {
+    private static int[][] listToArray(List<String> lines) {
         int[][] matrix = new int[lines.size()][];
         int row = 0;
 
@@ -71,35 +74,6 @@ class Main {
         }
 
         return matrix;
-    }
-
-    /**
-     * Ищет отсортированные по возрастанию столбцы в матрице
-     *
-     * @param matrix матрица
-     * @return список с номерами отсортированных столбцов
-     */
-    private static List<Integer> getSortedColumns(int[][] matrix) {
-        int rowsNumber = matrix.length;
-        int columnsNumber = matrix[0].length;
-        List<Integer> sortedRows = new ArrayList<>();
-
-        for (int column = 0; column < columnsNumber; column++) {
-            boolean sorted = true;
-            int raw = 0;
-
-            while (sorted && raw < rowsNumber - 1) {
-                if (matrix[raw][column] > matrix[raw + 1][column]) {
-                    sorted = false;
-                }
-                raw++;
-            }
-
-            if (sorted) {
-                sortedRows.add(column);
-            }
-        }
-        return sortedRows;
     }
 
     /**
@@ -117,7 +91,7 @@ class Main {
     }
 
     /**
-     * проверяет является ли массив матрицей (одинаковый ли длины строки)
+     * проверяет является ли массив матрицей (одинаковой ли длины строки)
      *
      * @param matrix матрица
      * @return true если являетя, иначе false
@@ -135,12 +109,12 @@ class Main {
     }
 
     /**
-     * Проверка введенных данных
+     * Проверка введенных данных регулярным выражением
      *
-     * @param lines список
+     * @param lines список строк из исходного файла
      * @return true если все верно, иначе false
      */
-    private static boolean onlyNumbers(List<String> lines) {
+    private static boolean isDigital(List<String> lines) {
         String rexEx = "([0-9+-]*\\)*\\(*\\s*)+";
 
         for (String line : lines) {
@@ -152,4 +126,20 @@ class Main {
         return true;
     }
 
+    /**
+     * Генерирует сообщение об отсортированных столбцов
+     *
+     * @param sortedColumns список с индексами столбцов
+     * @return строка с информацией
+     */
+    private static String getSortedColumnsInfo(List<Integer> sortedColumns) {
+        StringBuilder outputString = new StringBuilder("Отсортировано столбцов: "
+                + sortedColumns.size() + ". Номера столбцов: ");
+
+        for (int column : sortedColumns) {
+            outputString.append(column + 1).append(" ");
+        }
+
+        return String.valueOf(outputString);
+    }
 }
