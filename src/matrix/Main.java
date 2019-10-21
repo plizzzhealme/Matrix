@@ -21,7 +21,6 @@ class Main {
         int[][] array;
         Matrix matrix;
         String result;
-
         if (isDigital(list) && isMatrix(array = listToArray(list))) { //если данные в файле корректны
 
             /*
@@ -44,7 +43,6 @@ class Main {
             matrix.replace();
             System.out.println(matrix);
             writeToFile(OUTPUT_FILE, matrix.toString(), ADD);
-
         } else {
             System.out.println(INCORRECT_DATA);
         }
