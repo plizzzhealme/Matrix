@@ -4,17 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Matrix {
-    /**
-     * Все строки должны быть одинаковой длины
-     */
+
     private final int[][] data;
     private final int columnsNumber;
     private final int rowsNumber;
 
     /**
-     * копирует в матрицу элементы из массива
+     * Копирует в матрицу элементы из массива,
+     * высчитывает количество строк и стобцов
      *
-     * @param array двумерный массив, строки должны иметь одинаковую длину
+     * @param array строки массива должны быть одинаковой длины
      */
     Matrix(int[][] array) {
         rowsNumber = array.length;
@@ -26,24 +25,29 @@ class Matrix {
     }
 
     /**
-     * @return строку, представляющую собой матрицу, элементы разделены пробелами и построчно
+     * Возвращает строковое представление матрицы
+     *
+     * @return строка, в которой элементы разделены пробелом,
+     * а ряды символом перевода строки
      */
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder();
+        StringBuilder resultString = new StringBuilder();
         for (int i = 0; i < rowsNumber; i++) {
             for (int j = 0; j < columnsNumber; j++) {
-                result.append(data[i][j]).append(" ");
+                resultString.append(data[i][j]).append(" ");
             }
-            result.append("\n");
+            resultString.append("\n");
         }
-        return result.toString();
+        return resultString.toString();
     }
 
     /**
-     * @return список с индексами отсортированных по возрастанию столбцов
+     * Ищет отсортированные по возрастанию столбцы матрицы
+     *
+     * @return список с индексами отсортированных столбцов (отсчет с 0)
      */
-    List<Integer> getSortedColumns() {
+    List<Integer> getSortedColumnsIndexes() {
         List<Integer> sortedColumns = new ArrayList<>();
         for (int column = 0; column < columnsNumber; column++) {
             boolean sorted = true;
@@ -63,9 +67,10 @@ class Matrix {
 
     /**
      * Меняет четверти матрицы местами,
-     * если матрица порядка 2n
+     * если матрица имеет порядок 2n,
+     * иначе оставляет без изменений
      */
-    void replace() {
+    void replaceQuarters() {
         if (columnsNumber == rowsNumber && columnsNumber % 2 == 0) {
             int n = columnsNumber / 2;
             for (int i = 0; i < n; i++) {

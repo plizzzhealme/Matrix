@@ -32,7 +32,7 @@ class Main {
             /*
             Считываем и печатаем отсортированные столбцы
              */
-            List<Integer> sortedColumns = matrix.getSortedColumns();
+            List<Integer> sortedColumns = matrix.getSortedColumnsIndexes();
             result = getSortedColumnsInfo(sortedColumns);
             System.out.println(result);
             writeToFile(result, REPLACE);
@@ -40,7 +40,7 @@ class Main {
             /*
             перемещаем элементы в матрице, печатаем получившуюся матрицу
              */
-            matrix.replace();
+            matrix.replaceQuarters();
             System.out.println(matrix);
             writeToFile(matrix.toString(), ADD);
         } else {
@@ -49,9 +49,9 @@ class Main {
     }
 
     /**
-     * Считываем текстовый файл в список строк
+     * Считывает текстовый файл в список строк
      *
-     * @return получившийся список, в случае ошибки - пустой список
+     * @return получившийся список, а в случае ошибки - пустой список
      */
     private static List<String> readFromFile() {
         try {
@@ -78,7 +78,7 @@ class Main {
     }
 
     /**
-     * Сохраняем строку в текстовый файл
+     * Сохраняет строку в текстовый файл
      *
      * @param data   записываемая строка
      * @param append true - добавить в конец файла, false - перезаписать файл
@@ -93,17 +93,18 @@ class Main {
     }
 
     /**
-     * проверяет является ли массив матрицей (одинаковой ли длины строки)
+     * Проверяет, является ли массив матрицей
+     * (одинаковой ли длины строки)
      *
-     * @param matrix матрица
-     * @return true если являетя, иначе false
+     * @param array двумерный массив для проверки
+     * @return true если массив являетя матрицей, иначе - false
      */
-    private static boolean isMatrix(int[][] matrix) {
-        if (matrix.length == 0) {
+    private static boolean isMatrix(int[][] array) {
+        if (array.length == 0) {
             return false;
         }
-        int size = matrix[0].length;
-        for (int[] raw : matrix) {
+        int size = array[0].length;
+        for (int[] raw : array) {
             if (raw.length != size) {
                 return false;
             }
@@ -112,10 +113,11 @@ class Main {
     }
 
     /**
-     * Проверка введенных данных регулярным выражением
+     * Проверяет список строк на корректность,
+     * допустимы только числа, знак минуса и пробелы
      *
-     * @param lines список строк из исходного файла
-     * @return true если все верно, иначе false
+     * @param lines список строк для проверки
+     * @return true если все верно, иначе - false
      */
     private static boolean isDigital(List<String> lines) {
         String rexEx = "([0-9+-]*\\)*\\(*\\s*)+";
@@ -128,10 +130,10 @@ class Main {
     }
 
     /**
-     * Генерирует сообщение об отсортированных столбцов
+     * Генерирует сообщение об отсортированных столбцах
      *
      * @param sortedColumns список с индексами столбцов
-     * @return строка с информацией
+     * @return итоговая строка с информацией
      */
     private static String getSortedColumnsInfo(List<Integer> sortedColumns) {
         StringBuilder outputString = new StringBuilder("Отсортировано столбцов: "
